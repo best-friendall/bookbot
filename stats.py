@@ -1,31 +1,26 @@
-def get_book_text(path):
-    with open(path) as f:
-        txt = f.read()
-    return txt
+def get_num_words(text: str) -> int:
+    words = text.split()
+    return len(words)
 
 
-def count_characters(txt):
-    counted: dict[str, int] = {}
-    for temp in txt:
-        if temp.lower() in counted:
-            counted[temp.lower()] += 1
+def get_chars_dict(text: str) -> dict[str, int]:
+    chars = {}
+    for c in text:
+        lowered = c.lower()
+        if lowered in chars:
+            chars[lowered] += 1
         else:
-            counted[temp.lower()] = 1
-    return counted
+            chars[lowered] = 1
+    return chars
 
 
-def helper(dict):  # for sort() to use the frequency as the key
-    return dict["num"]
+def sort_on(char_count: tuple[str, int]) -> int:
+    return char_count[1]
 
 
-def sort_count(counted):
-    dictlist = []
-    for char in counted:
-        # print(f"char: {char}, num: {counted[char]}")
-        if char.isalpha():  # check if it's a letter
-            dictlist.append(
-                {"char": char, "num": counted[char]}
-            )  # add its dictionary to the list
-    dictlist.sort(reverse=True, key=helper)
-    # calls helper with the current index element it's sorting, doesn't need a variable or anything
-    return dictlist
+def chars_dict_to_sorted_list(num_chars_dict: dict[str, int]) -> list[tuple[str, int]]:
+    chars_list: list[tuple[str, int]] = []
+    for char in num_chars_dict:
+        count = num_chars_dict[char]
+        chars_list.append((char, count))
+    return sorted(chars_list, reverse=True, key=sort_on)

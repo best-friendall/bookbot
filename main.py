@@ -1,26 +1,44 @@
 import sys
 
-from stats import count_characters, get_book_text, sort_count
+from stats import (
+    chars_dict_to_sorted_list,
+    get_chars_dict,
+    get_num_words,
+)
 
-if len(sys.argv) == 1:
-    print("Usage: python3 main.py <path_to_book>")
-    sys.exit(1)
-elif len(sys.argv) == 2:
-    path = sys.argv[1]
-else:
-    print("One at a time, please!")
-    sys.exit(1)
-width = 60
-# print(sys.argv)
-print(f"{' BOOKBOT ':=^{width}}")
-print(f"Analyzing book found at {path}...")
-print(f"{' Word Count ':-^{width}}")
-s = get_book_text(path)
-print(f"Found {len(s.split())} total words")
-counted: dict[str, int] = count_characters(get_book_text(path))
-# print(f"Counter: {counted}")
-sorted = sort_count(counted)
-print(f"{' Character Count ':-^{width}}")
-for i in range(len(sorted)):
-    print(f"{sorted[i]['char']}: {sorted[i]['num']}")
-print(f"{' END ':=^{width}}")
+
+def main() -> None:
+    if len(sys.argv) < 2:
+        print("Usage: python3 main.py <path_to_book>")
+        sys.exit(1)
+    book_path = sys.argv[1]
+
+    text = get_book_text(book_path)
+    num_words = get_num_words(text)
+    chars_dict = get_chars_dict(text)
+    chars_sorted_list = chars_dict_to_sorted_list(chars_dict)
+    print_report(book_path, num_words, chars_sorted_list)
+
+
+def get_book_text(path: str) -> str:
+    with open(path) as f:
+        return f.read()
+
+
+def print_report(
+    book_path: str, num_words: int, chars_sorted_list: list[tuple[str, int]]
+) -> None:
+    print("============ BOOKBOT ============")
+    print(f"Analyzing book found at {book_path}...")
+    print("----------- Word Count ----------")
+    print(f"Found {num_words} total words")
+    print("--------- Character Count -------")
+    for char, count in chars_sorted_list:
+        if not char.isalpha():
+            continue
+        print(f"{char}: {count}")
+
+    print("============= END ===============")
+
+
+main()
